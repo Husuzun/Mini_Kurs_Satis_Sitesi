@@ -36,15 +36,10 @@ const Cart = () => {
             return;
         }
 
-        setShowPaymentModal(true);
-    };
-
-    const handlePaymentSuccess = async (paymentData) => {
         try {
             const orderData = {
                 orderItems: cartItems.map(item => ({
-                    courseId: item.id,
-                    price: item.price
+                    courseId: item.id
                 }))
             };
             
@@ -53,9 +48,8 @@ const Cart = () => {
 
             if (orderResponse.isSuccessful) {
                 console.log('Order created successfully:', orderResponse.data);
-                addNotification('Siparişiniz başarıyla tamamlandı', 'success');
-                clearCart();
-                navigate('/profile');
+                setOrderId(orderResponse.data.id);
+                setShowPaymentModal(true);
             } else {
                 const errorMessage = orderResponse.error?.message || 'Sipariş oluşturulurken bir hata oluştu';
                 console.error('Order creation failed:', errorMessage);
@@ -64,6 +58,17 @@ const Cart = () => {
         } catch (error) {
             console.error('Order creation error:', error);
             addNotification('Sipariş oluşturulurken bir hata oluştu. Lütfen daha sonra tekrar deneyin.', 'error');
+        }
+    };
+
+    const handlePaymentSuccess = async (paymentData) => {
+        try {
+            addNotification('Siparişiniz başarıyla tamamlandı', 'success');
+            clearCart();
+            navigate('/profile');
+        } catch (error) {
+            console.error('Payment success handling error:', error);
+            addNotification('İşlem başarılı ancak bir hata oluştu. Lütfen sipariş geçmişinizi kontrol edin.', 'error');
         }
     };
 
@@ -166,6 +171,7 @@ const Cart = () => {
                     onError={(error) => {
                         addNotification(error, 'error');
                     }}
+                    orderId={orderId}
                 />
             )}
         </Container>

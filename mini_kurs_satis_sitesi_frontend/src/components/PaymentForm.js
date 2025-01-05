@@ -12,8 +12,9 @@ import {
     Typography
 } from '@mui/material';
 
-const PaymentForm = ({ open, onClose, onSuccess, onError }) => {
+const PaymentForm = ({ open, onClose, onSuccess, onError, orderId }) => {
     const [formData, setFormData] = useState({
+        orderId: orderId,
         paymentMethod: 'CreditCard',
         cardNumber: '',
         expiryMonth: '',

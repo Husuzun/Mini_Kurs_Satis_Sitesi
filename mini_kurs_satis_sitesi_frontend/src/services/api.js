@@ -318,18 +318,24 @@ export const courseAPI = {
 // Order endpoints
 export const orderAPI = {
     getOrderHistory: () => apiCall('/Orders'),
-    createOrder: (orderData) => apiCall('/Orders', {
-        method: 'POST',
-        body: JSON.stringify(orderData)
-    })
+    createOrder: (orderData) => {
+        console.log('Creating order with API:', orderData);
+        return apiCall('/Orders', {
+            method: 'POST',
+            body: JSON.stringify(orderData)
+        });
+    }
 };
 
 // Payment endpoints
 export const paymentAPI = {
-    processPayment: (paymentData) => apiCall('/payments', {
-        method: 'POST',
-        body: JSON.stringify(paymentData)
-    })
+    processPayment: (paymentData) => {
+        console.log('Processing payment with API:', paymentData);
+        return apiCall('/Payments', {
+            method: 'POST',
+            body: JSON.stringify(paymentData)
+        });
+    }
 };
 
 export default {
