@@ -1,0 +1,1 @@
+export const DEFAULT_COURSE_IMAGE = 'https://placehold.co/400x225/e9ecef/495057?text=Kurs+Görseli&font=roboto'; 
