@@ -4,12 +4,10 @@ using System.Threading.Tasks;
 
 namespace Mini_Kurs_Satis_Sitesi.Core.Interfaces
 {
-    public interface ICourseRepository
+    public interface ICourseRepository : IGenericRepository<Course>
     {
-        Task<IEnumerable<Course>> GetAllCoursesAsync();
-        Task<Course> GetCourseByIdAsync(int id);
-        Task AddCourseAsync(Course course);
-        Task UpdateCourseAsync(Course course);
-        Task DeleteCourseAsync(int id);
+        Task<IEnumerable<Course>> GetCoursesByCategory(string category);
+        Task<IEnumerable<Course>> SearchCourses(string searchTerm);
+        Task<Course> GetCourseWithDetails(int id);
     }
 }

@@ -6,8 +6,13 @@ using Mini_Kurs_Satis_Sitesi.Core.Interfaces;
 using Mini_Kurs_Satis_Sitesi.Core.Models;
 using Mini_Kurs_Satis_Sitesi.Core.UnitOfWork;
 using SharedLibrary.DTOs;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace UdemyAuthServer.Service.Services
+namespace Mini_Kurs_Satis_Sitesi.Service.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
@@ -39,7 +44,7 @@ namespace UdemyAuthServer.Service.Services
             {
                 return Response<TokenDto>.Fail("Email or Password is wrong", 400, true);
             }
-            var token = _tokenService.CreateToken(user);
+            var token = await _tokenService.CreateToken(user);
 
             var userRefreshToken = await _userRefreshTokenService.Where(x => x.UserId == user.Id).SingleOrDefaultAsync();
 
@@ -53,7 +58,7 @@ namespace UdemyAuthServer.Service.Services
                 userRefreshToken.Expiration = token.RefreshTokenExpiration;
             }
 
-            await _unitOfWork.CommmitAsync();
+            await _unitOfWork.CommitAsync();
 
             return Response<TokenDto>.Success(token, 200);
         }
@@ -80,10 +85,6 @@ namespace UdemyAuthServer.Service.Services
             {
                 return Response<TokenDto>.Fail("Refresh token not found", 404, true);
             }
-            if (!(existRefreshToken.Expiration > DateTime.Now))
-            {
-                return Response<TokenDto>.Fail("Refresh token has expired", 404, true);
-            }
 
             var user = await _userManager.FindByIdAsync(existRefreshToken.UserId);
 
@@ -92,12 +93,12 @@ namespace UdemyAuthServer.Service.Services
                 return Response<TokenDto>.Fail("User Id not found", 404, true);
             }
 
-            var tokenDto = _tokenService.CreateToken(user);
+            var tokenDto = await _tokenService.CreateToken(user);
 
             existRefreshToken.Code = tokenDto.RefreshToken;
             existRefreshToken.Expiration = tokenDto.RefreshTokenExpiration;
 
-            await _unitOfWork.CommmitAsync();
+            await _unitOfWork.CommitAsync();
 
             return Response<TokenDto>.Success(tokenDto, 200);
         }
@@ -112,7 +113,7 @@ namespace UdemyAuthServer.Service.Services
 
             _userRefreshTokenService.Remove(existRefreshToken);
 
-            await _unitOfWork.CommmitAsync();
+            await _unitOfWork.CommitAsync();
 
             return Response<NoDataDto>.Success(200);
         }

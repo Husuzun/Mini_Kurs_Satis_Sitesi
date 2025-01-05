@@ -13,8 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mini_Kurs_Satis_Sitesi.Data
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedLibrary", "SharedLibrary\SharedLibrary.csproj", "{94E8BE16-6F05-4ECA-9D20-AFE693D1A00F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mini_Kurs_Satis_Sitesi.Web", "Mini_Kurs_Satis_Sitesi.Web\Mini_Kurs_Satis_Sitesi.Web.csproj", "{990953BC-3CFA-4ED2-BFDD-4CB1EA42FAD2}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,10 +39,6 @@ Global
 		{94E8BE16-6F05-4ECA-9D20-AFE693D1A00F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94E8BE16-6F05-4ECA-9D20-AFE693D1A00F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94E8BE16-6F05-4ECA-9D20-AFE693D1A00F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{990953BC-3CFA-4ED2-BFDD-4CB1EA42FAD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{990953BC-3CFA-4ED2-BFDD-4CB1EA42FAD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{990953BC-3CFA-4ED2-BFDD-4CB1EA42FAD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{990953BC-3CFA-4ED2-BFDD-4CB1EA42FAD2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

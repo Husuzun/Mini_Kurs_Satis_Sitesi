@@ -1,0 +1,372 @@
+{
+    "info": {
+        "name": "Mini Kurs Satış Sitesi API",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Auth",
+            "item": [
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/api/auth/createtoken",
+                        "body": {
+                            "mode": "raw",
+                            "raw": {
+                                "email": "user@example.com",
+                                "password": "password123"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Client Login",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/api/auth/createtokenbyclient",
+                        "body": {
+                            "mode": "raw",
+                            "raw": {
+                                "clientId": "client1",
+                                "clientSecret": "secret"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Refresh Token",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/api/auth/createtokenbyrefreshtoken",
+                        "body": {
+                            "mode": "raw",
+                            "raw": {
+                                "token": "refresh_token_here"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Revoke Refresh Token",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/api/auth/revokerefreshtoken",
+                        "body": {
+                            "mode": "raw",
+                            "raw": {
+                                "token": "refresh_token_here"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Users",
+            "item": [
+                {
+                    "name": "Register User",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/api/user",
+                        "body": {
+                            "mode": "raw",
+                            "raw": {
+                                "firstName": "John",
+                                "lastName": "Doe",
+                                "userName": "johndoe",
+                                "email": "john@example.com",
+                                "password": "password123",
+                                "city": "Istanbul"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Get User Profile",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/api/user",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": "{{token}}"
+                        }
+                    }
+                },
+                {
+                    "name": "Update User Profile",
+                    "request": {
+                        "method": "PUT",
+                        "url": "{{baseUrl}}/api/user/profile",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": "{{token}}"
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": {
+                                "firstName": "John",
+                                "lastName": "Doe",
+                                "city": "Istanbul"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Get Purchased Courses",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/api/user/purchased-courses",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": "{{token}}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Courses",
+            "item": [
+                {
+                    "name": "Get All Courses",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/api/courses"
+                    }
+                },
+                {
+                    "name": "Get Course By Id",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/api/courses/{id}"
+                    }
+                },
+                {
+                    "name": "Get Instructor Courses",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/api/courses/instructor-courses",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": "{{token}}"
+                        }
+                    }
+                },
+                {
+                    "name": "Create Course",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/api/courses",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": "{{token}}"
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": {
+                                "name": "Course Name",
+                                "description": "Course Description",
+                                "price": 99.99,
+                                "category": "Programming",
+                                "imageUrl": "https://example.com/image.jpg"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Update Course",
+                    "request": {
+                        "method": "PUT",
+                        "url": "{{baseUrl}}/api/courses/{id}",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": "{{token}}"
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": {
+                                "name": "Updated Course Name",
+                                "description": "Updated Description",
+                                "price": 149.99,
+                                "category": "Programming",
+                                "imageUrl": "https://example.com/new-image.jpg",
+                                "isActive": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Course",
+                    "request": {
+                        "method": "DELETE",
+                        "url": "{{baseUrl}}/api/courses/{id}",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": "{{token}}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Orders",
+            "item": [
+                {
+                    "name": "Get User Orders",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/api/orders",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": "{{token}}"
+                        }
+                    }
+                },
+                {
+                    "name": "Get Order Details",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/api/orders/{id}",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": "{{token}}"
+                        }
+                    }
+                },
+                {
+                    "name": "Create Order",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/api/orders",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": "{{token}}"
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": {
+                                "orderItems": [
+                                    {
+                                        "courseId": 1
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Update Order Status (Instructor)",
+                    "request": {
+                        "method": "PUT",
+                        "url": "{{baseUrl}}/api/orders/{id}/status",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": "{{token}}"
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "\"Paid\""
+                        }
+                    }
+                },
+                {
+                    "name": "Get All Orders (Instructor)",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/api/orders/all",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": "{{token}}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Payments",
+            "item": [
+                {
+                    "name": "Process Payment",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/api/payments",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": "{{token}}"
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": {
+                                "orderId": 1,
+                                "paymentMethod": "CreditCard",
+                                "cardNumber": "4111111111111111",
+                                "expiryMonth": "12",
+                                "expiryYear": "2024",
+                                "cvv": "123"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Get Payment By Order",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/api/payments/order/{orderId}",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": "{{token}}"
+                        }
+                    }
+                },
+                {
+                    "name": "Get User Payments",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/api/payments/user",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": "{{token}}"
+                        }
+                    }
+                },
+                {
+                    "name": "Validate Payment (Instructor)",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/api/payments/{id}/validate",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": "{{token}}"
+                        }
+                    }
+                },
+                {
+                    "name": "Get All Payments (Instructor)",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/api/payments/all",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": "{{token}}"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:5000",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "your_jwt_token_here",
+            "type": "string"
+        }
+    ]
+} 

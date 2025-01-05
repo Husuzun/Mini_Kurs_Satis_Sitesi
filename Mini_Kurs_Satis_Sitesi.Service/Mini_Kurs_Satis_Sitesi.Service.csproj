@@ -8,13 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Mini_Kurs_Satis_Sitesi.Core\Mini_Kurs_Satis_Sitesi.Core.csproj" />
     <ProjectReference Include="..\Mini_Kurs_Satis_Sitesi.Data\Mini_Kurs_Satis_Sitesi.Data.csproj" />
-    <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj" />
   </ItemGroup>
 
 </Project>

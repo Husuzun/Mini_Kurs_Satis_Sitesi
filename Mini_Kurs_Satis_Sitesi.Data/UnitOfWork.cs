@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Mini_Kurs_Satis_Sitesi.Core.UnitOfWork;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Mini_Kurs_Satis_Sitesi.Core.UnitOfWork;
+using Mini_Kurs_Satis_Sitesi.Data.Repositories;
+using Mini_Kurs_Satis_Sitesi.Data;
 
 namespace Mini_Kurs_Satis_Sitesi.Data
 {
@@ -12,9 +13,9 @@ namespace Mini_Kurs_Satis_Sitesi.Data
     {
         private readonly DbContext _context;
 
-        public UnitOfWork(ApplicationDbContext applicationDbContext)
+        public UnitOfWork(ApplicationDbContext appDbContext)
         {
-            _context = applicationDbContext;
+            _context = appDbContext;
         }
 
         public void Commit()
@@ -22,7 +23,7 @@ namespace Mini_Kurs_Satis_Sitesi.Data
             _context.SaveChanges();
         }
 
-        public async Task CommmitAsync()
+        public async Task CommitAsync()
         {
             await _context.SaveChangesAsync();
         }

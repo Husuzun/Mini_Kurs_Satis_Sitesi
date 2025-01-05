@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SharedLibrary.Configuration;
+using SharedLibrary.Services;
 using Mini_Kurs_Satis_Sitesi.Core.DTOs;
 using Mini_Kurs_Satis_Sitesi.Core.Interfaces;
 using Mini_Kurs_Satis_Sitesi.Core.Models;
@@ -9,7 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 
-namespace SharedLibrary.Services
+namespace Mini_Kurs_Satis_Sitesi.Service.Services
 {
     public class TokenService : ITokenService
     {
@@ -35,14 +36,18 @@ namespace SharedLibrary.Services
             return Convert.ToBase64String(numberByte);
         }
 
-        private IEnumerable<Claim> GetClaims(UserApp userApp, List<String> audiences)
+        private async Task<IEnumerable<Claim>> GetClaims(UserApp userApp, List<String> audiences)
         {
             var userList = new List<Claim> {
-            new Claim(ClaimTypes.NameIdentifier,userApp.Id),
-            new Claim(JwtRegisteredClaimNames.Email, userApp.Email),
-            new Claim(ClaimTypes.Name,userApp.UserName),
-            new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
+                new Claim(ClaimTypes.NameIdentifier, userApp.Id),
+                new Claim(ClaimTypes.Email, userApp.Email),
+                new Claim(ClaimTypes.Name, userApp.UserName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            // Add user roles to claims
+            var userRoles = await _userManager.GetRolesAsync(userApp);
+            userList.AddRange(userRoles.Select(x => new Claim(ClaimTypes.Role, x)));
 
             userList.AddRange(audiences.Select(x => new Claim(JwtRegisteredClaimNames.Aud, x)));
 
@@ -60,7 +65,7 @@ namespace SharedLibrary.Services
             return claims;
         }
 
-        public TokenDto CreateToken(UserApp userApp)
+        public async Task<TokenDto> CreateToken(UserApp userApp)
         {
             var accessTokenExpiration = DateTime.Now.AddMinutes(_tokenOption.AccessTokenExpiration);
             var refreshTokenExpiration = DateTime.Now.AddMinutes(_tokenOption.RefreshTokenExpiration);
@@ -71,9 +76,9 @@ namespace SharedLibrary.Services
             JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(
                 issuer: _tokenOption.Issuer,
                 expires: accessTokenExpiration,
-                 notBefore: DateTime.Now,
-                 claims: GetClaims(userApp, _tokenOption.Audience),
-                 signingCredentials: signingCredentials);
+                notBefore: DateTime.Now,
+                claims: await GetClaims(userApp, _tokenOption.Audience),
+                signingCredentials: signingCredentials);
 
             var handler = new JwtSecurityTokenHandler();
 
@@ -101,6 +106,7 @@ namespace SharedLibrary.Services
             JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(
                 issuer: _tokenOption.Issuer,
                 expires: accessTokenExpiration,
+                 notBefore: DateTime.Now,
                  claims: GetClaimsByClient(client),
                  signingCredentials: signingCredentials);
 

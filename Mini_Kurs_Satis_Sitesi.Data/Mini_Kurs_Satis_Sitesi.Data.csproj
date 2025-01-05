@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Mini_Kurs_Satis_Sitesi.Core\Mini_Kurs_Satis_Sitesi.Core.csproj" />
-    <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,101 +1,109 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Mini_Kurs_Satis_Sitesi.Core.Interfaces;
-using Mini_Kurs_Satis_Sitesi.Core.Services;
 using Mini_Kurs_Satis_Sitesi.Core.UnitOfWork;
 using SharedLibrary.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
+using Mini_Kurs_Satis_Sitesi.Core.Models;
+using Mini_Kurs_Satis_Sitesi.Core.DTOs;
 
 namespace Mini_Kurs_Satis_Sitesi.Service.Services
 {
+    /// <summary>
+    /// Generic service implementation for basic CRUD operations
+    /// </summary>
+    /// <typeparam name="TEntity">The entity type</typeparam>
+    /// <typeparam name="TDto">The DTO type</typeparam>
     public class ServiceGeneric<TEntity, TDto> : IServiceGeneric<TEntity, TDto> where TEntity : class where TDto : class
     {
-        private readonly IUnitOfWork _unitOfWork;
-
         private readonly IGenericRepository<TEntity> _genericRepository;
+        protected readonly IUnitOfWork _unitOfWork;
+        protected readonly IMapper _mapper;
+        protected readonly IUserService _userService;
 
-        public ServiceGeneric(IUnitOfWork unitOfWork, IGenericRepository<TEntity> genericRepository)
+        public ServiceGeneric(IGenericRepository<TEntity> genericRepository, IUnitOfWork unitOfWork, IMapper mapper, IUserService userService = null)
         {
-            _unitOfWork = unitOfWork;
-            _genericRepository = genericRepository;
+            _genericRepository = genericRepository ?? throw new ArgumentNullException(nameof(genericRepository));
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _userService = userService;
         }
 
-        public async Task<Response<TDto>> AddAsync(TDto entity)
+        public virtual async Task<Response<TDto>> AddAsync(TDto dto)
         {
-            var newEntity = ObjectMapper.Mapper.Map<TEntity>(entity);
-
-            await _genericRepository.AddAsync(newEntity);
-
-            await _unitOfWork.CommmitAsync();
-
-            var newDto = ObjectMapper.Mapper.Map<TDto>(newEntity);
-
-            return Response<TDto>.Success(newDto, 200);
+            var entity = _mapper.Map<TEntity>(dto);
+            await _genericRepository.AddAsync(entity);
+            await _unitOfWork.CommitAsync();
+            return Response<TDto>.Success(_mapper.Map<TDto>(entity), 200);
         }
 
-        public async Task<Response<IEnumerable<TDto>>> GetAllAsync()
+        public virtual async Task<Response<IEnumerable<TDto>>> GetAllAsync()
         {
-            var products = ObjectMapper.Mapper.Map<List<TDto>>(await _genericRepository.GetAllAsync());
-
-            return Response<IEnumerable<TDto>>.Success(products, 200);
+            var entities = await _genericRepository.GetAllAsync();
+            return Response<IEnumerable<TDto>>.Success(_mapper.Map<IEnumerable<TDto>>(entities), 200);
         }
 
-        public async Task<Response<TDto>> GetByIdAsync(int id)
+        public virtual async Task<Response<TDto>> GetByIdAsync(int id)
         {
-            var product = await _genericRepository.GetByIdAsync(id);
-
-            if (product == null)
+            var entity = await _genericRepository.GetByIdAsync(id);
+            if (entity == null)
             {
                 return Response<TDto>.Fail("Id not found", 404, true);
             }
 
-            return Response<TDto>.Success(ObjectMapper.Mapper.Map<TDto>(product), 200);
+            var dto = _mapper.Map<TDto>(entity);
+
+            // Eğer entity Course ise ve dto CourseDto ise, instructor name'i set et
+            if (entity is Course course && dto is CourseDto courseDto && _userService != null)
+            {
+                if (!string.IsNullOrEmpty(course.InstructorId))
+                {
+                    var instructor = await _userService.GetUserByIdAsync(course.InstructorId);
+                    if (instructor.Data != null)
+                    {
+                        courseDto.InstructorName = $"{instructor.Data.FirstName} {instructor.Data.LastName}";
+                    }
+                }
+            }
+
+            return Response<TDto>.Success(dto, 200);
         }
 
-        public async Task<Response<NoDataDto>> Remove(int id)
+        public virtual async Task<Response<NoDataDto>> RemoveAsync(int id)
         {
-            var isExistEntity = await _genericRepository.GetByIdAsync(id);
-
-            if (isExistEntity == null)
+            var entity = await _genericRepository.GetByIdAsync(id);
+            if (entity == null)
             {
                 return Response<NoDataDto>.Fail("Id not found", 404, true);
             }
 
-            _genericRepository.Remove(isExistEntity);
-
-            await _unitOfWork.CommmitAsync();
-            //204 durum kodu =>  No Content  => Response body'sinde hiç bir dat  olmayacak.
+            _genericRepository.Remove(entity);
+            await _unitOfWork.CommitAsync();
             return Response<NoDataDto>.Success(204);
         }
 
-        public async Task<Response<NoDataDto>> Update(TDto entity, int id)
+        public virtual async Task<Response<NoDataDto>> UpdateAsync(TDto dto, int id)
         {
-            var isExistEntity = await _genericRepository.GetByIdAsync(id);
-
-            if (isExistEntity == null)
+            var existingEntity = await _genericRepository.GetByIdAsync(id);
+            if (existingEntity == null)
             {
                 return Response<NoDataDto>.Fail("Id not found", 404, true);
             }
 
-            var updateEntity = ObjectMapper.Mapper.Map<TEntity>(entity);
-
-            _genericRepository.Update(updateEntity);
-
-            await _unitOfWork.CommmitAsync();
-            //204 durum kodu =>  No Content  => Response body'sinde hiç bir data  olmayacak.
+            var entity = _mapper.Map<TEntity>(dto);
+            _genericRepository.Update(entity);
+            await _unitOfWork.CommitAsync();
             return Response<NoDataDto>.Success(204);
         }
 
-        public async Task<Response<IEnumerable<TDto>>> Where(Expression<Func<TEntity, bool>> predicate)
+        public virtual async Task<Response<IEnumerable<TDto>>> Where(Expression<Func<TEntity, bool>> predicate)
         {
-            // where(x=>x.id>5)
             var list = _genericRepository.Where(predicate);
-
-            return Response<IEnumerable<TDto>>.Success(ObjectMapper.Mapper.Map<IEnumerable<TDto>>(await list.ToListAsync()), 200);
+            return Response<IEnumerable<TDto>>.Success(_mapper.Map<IEnumerable<TDto>>(await list.ToListAsync()), 200);
         }
     }
 }

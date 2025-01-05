@@ -1,63 +1,69 @@
 using Microsoft.EntityFrameworkCore;
 using Mini_Kurs_Satis_Sitesi.Core.Interfaces;
-using Mini_Kurs_Satis_Sitesi.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace UdemyAuthServer.Data.Repositories
+namespace Mini_Kurs_Satis_Sitesi.Data.Repositories
 {
-    public class GenericRepository<Tentity> : IGenericRepository<Tentity> where Tentity : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly DbContext _context;
-        private readonly DbSet<Tentity> _dbSet;
+        protected readonly ApplicationDbContext _context;
+        private readonly DbSet<T> _dbSet;
 
         public GenericRepository(ApplicationDbContext context)
         {
             _context = context;
-            _dbSet = context.Set<Tentity>();
+            _dbSet = context.Set<T>();
         }
 
-        public async Task AddAsync(Tentity entity)
+        public async Task<T> GetByIdAsync(int id)
         {
-            await _dbSet.AddAsync(entity);
+            return await _dbSet.FindAsync(id);
         }
 
-        public async Task<IEnumerable<Tentity>> GetAllAsync()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
         }
 
-        public async Task<Tentity> GetByIdAsync(int id)
+        public IQueryable<T> Where(Expression<Func<T, bool>> expression)
         {
-            var entity = await _dbSet.FindAsync(id);
-            // EntityState.Detached yapýsýný service class'sýný anlatýrken detaylandýracaðým.
-            if (entity != null)
-            {
-                _context.Entry(entity).State = EntityState.Detached;
-            }
+            return _dbSet.Where(expression);
+        }
 
+        public async Task<T> AddAsync(T entity)
+        {
+            await _dbSet.AddAsync(entity);
             return entity;
         }
 
-        public void Remove(Tentity entity)
+        public async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities)
+        {
+            await _dbSet.AddRangeAsync(entities);
+            return entities;
+        }
+
+        public void Update(T entity)
+        {
+            _dbSet.Update(entity);
+        }
+
+        public void Remove(T entity)
         {
             _dbSet.Remove(entity);
         }
 
-        public Tentity Update(Tentity entity)
+        public void RemoveRange(IEnumerable<T> entities)
         {
-            _context.Entry(entity).State = EntityState.Modified;
-
-            return entity;
+            _dbSet.RemoveRange(entities);
         }
 
-        public IQueryable<Tentity> Where(Expression<Func<Tentity, bool>> predicate)
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> expression)
         {
-            return _dbSet.Where(predicate);
+            return await _dbSet.AnyAsync(expression);
         }
     }
 }

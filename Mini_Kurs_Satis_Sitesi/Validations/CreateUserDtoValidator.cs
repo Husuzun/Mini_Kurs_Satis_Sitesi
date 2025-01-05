@@ -12,11 +12,29 @@ namespace Mini_Kurs_Satis_Sitesi.API.Validations
     {
         public CreateUserDtoValidator()
         {
-            RuleFor(x => x.Email).NotEmpty().WithMessage("Email is required").EmailAddress().WithMessage("Email is wrong");
+            RuleFor(x => x.FirstName)
+                .NotEmpty().WithMessage("Ad zorunludur")
+                .Length(2, 50).WithMessage("Ad 2 ile 50 karakter arasında olmalıdır");
 
-            RuleFor(x => x.Password).NotEmpty().WithMessage("Password is required");
+            RuleFor(x => x.LastName)
+                .NotEmpty().WithMessage("Soyad zorunludur")
+                .Length(2, 50).WithMessage("Soyad 2 ile 50 karakter arasında olmalıdır");
 
-            RuleFor(x => x.UserName).NotEmpty().WithMessage("UserName is required");
+            RuleFor(x => x.UserName)
+                .NotEmpty().WithMessage("Kullanıcı adı zorunludur")
+                .MinimumLength(3).WithMessage("Kullanıcı adı en az 3 karakter olmalıdır");
+
+            RuleFor(x => x.Email)
+                .NotEmpty().WithMessage("E-posta zorunludur")
+                .EmailAddress().WithMessage("Geçersiz e-posta formatı");
+
+            RuleFor(x => x.Password)
+                .NotEmpty().WithMessage("Şifre zorunludur")
+                .MinimumLength(6).WithMessage("Şifre en az 6 karakter olmalıdır");
+
+            RuleFor(x => x.City)
+                .MinimumLength(2).WithMessage("Şehir en az 2 karakter olmalıdır")
+                .When(x => !string.IsNullOrEmpty(x.City));
         }
     }
 }

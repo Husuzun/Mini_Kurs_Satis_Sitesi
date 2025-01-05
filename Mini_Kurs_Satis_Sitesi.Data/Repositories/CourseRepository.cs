@@ -1,44 +1,40 @@
-﻿//using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Mini_Kurs_Satis_Sitesi.Core.Interfaces;
 using Mini_Kurs_Satis_Sitesi.Core.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Mini_Kurs_Satis_Sitesi.Data.Repositories
 {
-    public class CourseRepository : ICourseRepository
+    public class CourseRepository : GenericRepository<Course>, ICourseRepository
     {
-        //private readonly ApplicationDbContext _context;
-
-        /*public CourseRepository(ApplicationDbContext context)
+        public CourseRepository(ApplicationDbContext context) : base(context)
         {
-            _context = context;
-        }*/
-
-        public async Task<IEnumerable<Course>> GetAllCoursesAsync()
-        {
-            //return await _context.Courses.ToListAsync();
-            return [Course.Create(1, "sql", "sql dersi", 150.99m, "db")];
         }
 
-        public async Task<Course> GetCourseByIdAsync(int id)
+        public async Task<IEnumerable<Course>> GetCoursesByCategory(string category)
         {
-            throw new NotImplementedException();
+            return await _context.Courses
+                .Where(c => c.Category == category && c.IsActive)
+                .ToListAsync();
         }
 
-        public async Task AddCourseAsync(Course course)
+        public async Task<IEnumerable<Course>> SearchCourses(string searchTerm)
         {
-            throw new NotImplementedException();
+            return await _context.Courses
+                .Where(c => (c.Name.Contains(searchTerm) || 
+                           c.Description.Contains(searchTerm)) && 
+                           c.IsActive)
+                .ToListAsync();
         }
 
-        public async Task UpdateCourseAsync(Course course)
+        public async Task<Course> GetCourseWithDetails(int id)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task DeleteCourseAsync(int id)
-        {
-            throw new NotImplementedException();
+            return await _context.Courses
+                .Include(c => c.OrderItems)
+                .ThenInclude(oi => oi.Order)
+                .FirstOrDefaultAsync(c => c.Id == id && c.IsActive);
         }
     }
 }

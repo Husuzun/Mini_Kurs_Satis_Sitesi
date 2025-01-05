@@ -2,23 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Mini_Kurs_Satis_Sitesi.Core.Interfaces
 {
-    public interface IGenericRepository<TEntity> where TEntity : class
+    public interface IGenericRepository<T> where T : class
     {
-        Task<TEntity> GetByIdAsync(int id);
-
-        Task<IEnumerable<TEntity>> GetAllAsync();
-
-        IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate);
-
-        Task AddAsync(TEntity entity);
-
-        void Remove(TEntity entity);
-
-        TEntity Update(TEntity entity);
+        Task<T> GetByIdAsync(int id);
+        Task<IEnumerable<T>> GetAllAsync();
+        IQueryable<T> Where(Expression<Func<T, bool>> expression);
+        Task<T> AddAsync(T entity);
+        Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities);
+        void Update(T entity);
+        void Remove(T entity);
+        void RemoveRange(IEnumerable<T> entities);
+        Task<bool> AnyAsync(Expression<Func<T, bool>> expression);
     }
 }

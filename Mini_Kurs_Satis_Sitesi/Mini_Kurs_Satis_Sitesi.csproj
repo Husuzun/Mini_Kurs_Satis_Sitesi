@@ -14,16 +14,15 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="7.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Mini_Kurs_Satis_Sitesi.Core\Mini_Kurs_Satis_Sitesi.Core.csproj" />
-    <ProjectReference Include="..\Mini_Kurs_Satis_Sitesi.Data\Mini_Kurs_Satis_Sitesi.Data.csproj" />
     <ProjectReference Include="..\Mini_Kurs_Satis_Sitesi.Service\Mini_Kurs_Satis_Sitesi.Service.csproj" />
-    <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj" />
   </ItemGroup>
 
 </Project>
